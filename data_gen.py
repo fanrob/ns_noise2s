@@ -250,6 +250,47 @@ def generate_crypto_like(length,
 
 
 
+
+def generate_storsi(prices, past_len=7, future_len=7):
+    """
+    Генератор StoRSI с подглядыванием.
+    Возвращает массив Y той же длины, что prices.
+    На концах, где вычислить нельзя, ставится 0.5.
+    """
+    n = len(prices)
+    Y = np.full(n, 0.5, dtype=np.float32)  # заполняем 0.5 по умолчанию
+
+    for i in range(past_len, n - future_len):
+        window = prices[i - past_len : i + future_len]
+
+        min_val = np.min(window)
+        max_val = np.max(window)
+        if max_val - min_val == 0:
+            storsi = 0.5
+        else:
+            storsi = (prices[i] - min_val) / (max_val - min_val)
+
+        Y[i] = storsi
+
+    return np.array(Y)
+
+def generate_trand(prices):
+    """
+    Генератор StoRSI с подглядыванием.
+    Возвращает массив Y той же длины, что prices.
+    На концах, где вычислить нельзя, ставится 0.5.
+    """
+    n = len(prices)
+    Y = np.full(n, 0.5, dtype=np.float32)  # заполняем 0.5 по умолчанию
+
+   
+       
+
+    return prices
+
+
+
+
 # Параметры
 NUM_SAMPLES = 4000
 random.seed(10) # для воспроизводимости
@@ -261,6 +302,9 @@ random.seed(10) # для воспроизводимости
 #X, Y = generate_square_wave(num_samples=NUM_SAMPLES,amp_min=4, amp_max=4, freq_min=20, freq_max=20)
 #X, Y = generate_lineal(num_samples=NUM_SAMPLES, start_val=10, end_val=130) 
 X, Y = generate_real_data(NUM_SAMPLES,"eth_minute_data_rost.csv",0)
+X = Y
+#Y = generate_storsi(X, past_len=10, future_len=0)
+Y = generate_trand(X)
 
 #X, Y = generate_test_data(total_length=NUM_SAMPLES,
 #                            num_patterns=1,
